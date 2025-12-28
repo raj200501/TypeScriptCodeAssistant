@@ -52,7 +52,7 @@ Open the frontend at `http://localhost:5173` and the API at `http://localhost:50
 
 ```mermaid
 graph TD
-  UI --> Frontend (Vite + React)] --> API[Backend (Node + Express)
+  UI --> Frontend (Vite + React) --> API[Backend (Node + Express)
   API --> Engine[Analysis Engine]
   Engine --> Shared[Shared Types]
 ```
