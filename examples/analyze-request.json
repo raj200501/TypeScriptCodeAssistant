@@ -1,0 +1,5 @@
+{
+  "code": "var total = 42;\nconsole.log(total);",
+  "fileName": "example.ts",
+  "strict": true
+}

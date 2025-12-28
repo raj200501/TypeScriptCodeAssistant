@@ -4,9 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TypeScript Code Assistant</title>
+    <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/index.tsx"></script>
+    <header class="app-header">
+      <div>
+        <h1>TypeScript Code Assistant</h1>
+        <p>Production-grade analysis workflows for TypeScript teams.</p>
+      </div>
+      <nav class="app-nav">
+        <a href="/">Overview</a>
+        <a href="/editor">Editor</a>
+        <a href="/snippets">Snippets</a>
+        <a href="/runs">History</a>
+        <a href="/settings">Settings</a>
+      </nav>
+    </header>
+    <main class="app-content" id="app"></main>
+    <footer class="app-footer">
+      <span>&copy; 2024 TypeScript Code Assistant</span>
+      <span>API: /api/openapi.json</span>
+      <span>WebSocket: /api/stream</span>
+    </footer>
+    <script src="/static/app.js"></script>
   </body>
 </html>

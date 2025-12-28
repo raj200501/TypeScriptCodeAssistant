@@ -4,7 +4,7 @@ import SuggestionPanel from './SuggestionPanel';
 
 function CodeEditor() {
   const [code, setCode] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<{ suggestion: string; codeSnippet?: string }[]>([]);
   const suggestionCount = suggestions.length;
 
   const handleCodeChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -16,7 +16,7 @@ function CodeEditor() {
       const response = await fetchSuggestions(code);
       setSuggestions(response);
     } catch (error) {
-      console.error('Error fetching suggestions', error);
+      console.error('Error fetching suggestions', error instanceof Error ? error.message : error);
     }
   };
 

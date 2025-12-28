@@ -1,32 +1,37 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function HomePage() {
   return (
-    <div>
-      <h1>Welcome to the TypeScript Code Assistant</h1>
-      <p>Enhance your TypeScript development experience with real-time code suggestions and error checking.</p>
-      <section className="hero-section">
-        <h2>Build confidently with smarter suggestions</h2>
+    <div className="page page--home">
+      <section className="hero">
+        <h2>Production-ready TypeScript analysis in a single workspace.</h2>
         <p>
-          Paste your TypeScript snippet, request analysis, and receive actionable refactoring ideas in seconds.
+          TypeScript Code Assistant is a full-stack toolchain for analyzing, formatting, and
+          refactoring TypeScript projects. Use the live editor, save snippets, and monitor analysis
+          history from one place.
         </p>
-        <div className="hero-actions">
-          <a className="primary-cta" href="/editor">Open the Editor</a>
-          <a className="secondary-cta" href="https://www.typescriptlang.org/">Learn TypeScript</a>
+        <div className="hero__actions">
+          <Link className="button button--primary" to="/editor">
+            Launch Editor
+          </Link>
+          <Link className="button button--secondary" to="/snippets">
+            Browse Snippets
+          </Link>
         </div>
       </section>
-      <section className="feature-grid">
-        <div className="feature-card">
-          <h3>Guided refactors</h3>
-          <p>Get targeted feedback on naming, structure, and maintainability.</p>
+      <section className="grid">
+        <div className="card">
+          <h3>Analysis Engine</h3>
+          <p>Compiler-powered diagnostics, explainers, and quick fixes for common issues.</p>
         </div>
-        <div className="feature-card">
-          <h3>Fast feedback loop</h3>
-          <p>Analyze snippets instantly to keep your flow uninterrupted.</p>
+        <div className="card">
+          <h3>Live Collaboration</h3>
+          <p>Stream results over WebSocket for instant feedback as you type.</p>
         </div>
-        <div className="feature-card">
-          <h3>Team-ready insights</h3>
-          <p>Share suggestions and rationale with teammates for consistent code reviews.</p>
+        <div className="card">
+          <h3>Workflow Friendly</h3>
+          <p>Save snippets, track analysis runs, and ship changes with confidence.</p>
         </div>
       </section>
     </div>

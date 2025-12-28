@@ -1,0 +1,12 @@
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY frontend/package.json ./frontend/package.json
+COPY packages ./packages
+COPY tsconfig.base.json ./tsconfig.base.json
+RUN npm install --workspace frontend --workspace packages/shared --workspace packages/sdk
+COPY frontend ./frontend
+WORKDIR /app/frontend
+RUN npm run build
+EXPOSE 5173
+CMD ["npm", "run", "preview"]

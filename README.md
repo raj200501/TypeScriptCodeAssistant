@@ -1,16 +1,45 @@
 # TypeScript Code Assistant
 
-Welcome to the TypeScript Code Assistant! This innovative project aims to enhance the TypeScript development experience by providing real-time code suggestions, error checks, and refactoring options.
+TypeScript Code Assistant (TCA) is a production-grade, end-to-end toolchain for analyzing,
+refactoring, and managing TypeScript code. It ships with a rule-based analysis engine, a
+dependency-light backend API, and a fast vanilla JavaScript frontend.
 
-## Features
+## What it does
 
-- **Real-time Code Suggestions:** Get suggestions while you code.
-- **Error Checks:** Detect errors in your code instantly.
-- **Refactoring Options:** Improve your code with suggested refactoring.
+- **Static analysis without an LLM** using a deterministic rule engine.
+- **Quick fixes** that apply structured text edits.
+- **Live WebSocket streaming** for "analyze as you type" workflows.
+- **Snippet library** backed by a file database.
+- **History tracking** for analysis runs.
+
+## Screenshots
+
+Screenshot assets are generated locally to keep the repository binary-free. Run:
+
+```bash
+npm run screenshots
+```
+
+The generated files land in `docs/screenshots/` and match the filenames referenced by the
+verification workflow.
+
+## Architecture
+
+```
+Frontend (HTML/JS)
+        │
+        ▼
+Backend API (Node.js HTTP + WebSocket)
+        │
+        ▼
+Analysis Engine (rule-based diagnostics)
+```
+
+For more details, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## ✅ Verified Quickstart
 
-The original README did not include runnable commands. The following steps were verified locally and will start both the backend API and frontend UI:
+The following steps were verified locally and will start both the backend API and frontend UI:
 
 ```bash
 npm install
@@ -37,72 +66,44 @@ Smoke test:
 npm run smoke
 ```
 
-## Troubleshooting
+## Scripts
 
-- **Port already in use**: Set a different port with `PORT=5055 npm run dev:backend` (the frontend can still run on 5173).
-- **MongoDB not running**: The verified backend entrypoint (`backend/server-verified.ts`) does not require MongoDB. If you run `backend/server.ts` directly, it will attempt to connect to a local MongoDB instance.
+- `npm run dev`: start frontend and backend
+- `npm run test`: unit and integration tests (Node.js test runner)
+- `npm run test:integration`: integration tests only
+- `npm run test:e2e`: generate and validate screenshots
+- `npm run screenshots`: regenerate screenshots
+- `npm run lint`: repo checks (line endings/trailing whitespace)
+- `npm run typecheck`: TypeScript checks for backend and packages
+- `npm run verify`: full local verification pipeline
 
-## ✅ Verified Quickstart (workspace install)
+## API overview
 
-If your environment blocks installing root devDependencies, use the workspace-only install command and the custom dev runner:
+- `POST /api/analyze`: diagnostics and quick fixes
+- `POST /api/format`: format code
+- `POST /api/refactor`: apply a quick fix
+- `POST /api/suggestions`: legacy suggestions endpoint
+- `GET /api/snippets`: snippet library
+- `GET /api/runs`: analysis history
+- `GET /api/openapi.json`: OpenAPI spec
 
-```bash
-npm run install:workspaces
-npm run dev:all
+More details are available in [API.md](API.md).
+
+## Project structure
+
+```
+backend/               Node.js API + WebSocket
+frontend/              Static HTML/JS UI
+packages/shared/       Shared types & validators
+packages/analysis-engine/ Rule-based analysis
+packages/sdk/          Typed API client
+scripts/               Dev utilities and smoke tests
 ```
 
-Then visit:
-- Frontend: http://localhost:5173
-- Backend health: http://localhost:5000/health
+## Contributing
 
-## UI Notes
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-The editor includes a sample snippet loader and a quick insights section to demonstrate the suggestion workflow. Use the **Load Example** button to populate the editor and run **Analyze Code** to see response cards.
+## License
 
-### Alternative install if registry blocks workspace-root deps
-
-If you continue to see a 403 for `concurrently`, install each workspace directly:
-
-```bash
-npm run install:workspaces:direct
-```
-
-If the workspace install still attempts to download root-only dependencies, use the prefix-based installer:
-
-```bash
-npm run install:workspaces:prefix
-```
-
-- **Registry access blocked**: If `npm install` fails with a 403, your environment may block npm registry access. You will need to configure a mirror or allowlist npmjs.org to install dependencies.
-
-## ✅ Preview Without Dependencies
-
-If npm installs are blocked, you can still run a lightweight preview server (no dependencies required):
-
-```bash
-npm run preview:static
-```
-
-Then open http://localhost:4173 to interact with a mock suggestions flow that mirrors the API response shape.
-
-## Additional Preview Pages
-
-The preview server exposes multiple static demo pages:
-
-- http://localhost:4173/preview-dashboard
-- http://localhost:4173/preview-workflows
-- http://localhost:4173/preview-insights
-
-## Backend File-Backed API (Verified Entry Point)
-
-When running `backend/server-verified.ts`, the API now includes file-backed snippet storage:
-
-- `GET /api/snippets`
-- `POST /api/snippets`
-- `GET /api/snippets/:id`
-- `PUT /api/snippets/:id`
-- `DELETE /api/snippets/:id`
-- `POST /api/snippets/:id/analyze`
-- `GET /api/analyses?snippetId=<id>`
-
-These endpoints persist to `backend/data/store.json` (created automatically).
+MIT

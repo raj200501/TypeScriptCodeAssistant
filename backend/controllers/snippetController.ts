@@ -7,6 +7,7 @@ import {
   listSnippets,
   recordAnalysis,
   updateSnippet,
+  listAnalysisRuns,
 } from '../services/fileDatabase';
 import { analyzeCode } from '../utils/codeAnalysis';
 
@@ -76,4 +77,9 @@ export const listAnalysesHandler = async (req: Request, res: Response) => {
   const snippetId = req.query.snippetId as string | undefined;
   const analyses = await listAnalyses(snippetId);
   res.status(200).json(analyses);
+};
+
+export const listRunsHandler = async (_req: Request, res: Response) => {
+  const runs = await listAnalysisRuns();
+  res.status(200).json(runs);
 };

@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "baseUrl": ".",
+    "paths": {
+      "@tca/shared": ["../shared/dist"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["src/tests/**"]
+}
