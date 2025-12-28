@@ -14,7 +14,9 @@ const main = async () => {
     await access(path.resolve(root, file));
   }
 
-  await rm(path.resolve(root, 'docs', 'screenshots'), { recursive: true, force: true });
+  await Promise.all(
+    screenshots.map((file) => rm(path.resolve(root, file), { force: true }))
+  );
   console.log('Screenshots generated and cleaned.');
 };
 

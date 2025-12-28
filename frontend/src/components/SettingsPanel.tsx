@@ -1,4 +1,6 @@
 import React from 'react';
+import ToggleSwitch from '../ui/ToggleSwitch';
+import Badge from '../ui/Badge';
 
 interface SettingsPanelProps {
   strict: boolean;
@@ -7,6 +9,7 @@ interface SettingsPanelProps {
   onToggleWebsocket: (value: boolean) => void;
   rules: Record<string, boolean>;
   onToggleRule: (ruleId: string) => void;
+  showRules?: boolean;
 }
 
 const SettingsPanel: React.FC<SettingsPanelProps> = ({
@@ -16,41 +19,44 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   onToggleWebsocket,
   rules,
   onToggleRule,
+  showRules = true,
 }) => {
   return (
     <div className="settings-panel">
       <div className="settings-section">
         <h3>Analysis Defaults</h3>
-        <label>
-          <input
-            type="checkbox"
-            checked={strict}
-            onChange={(event) => onToggleStrict(event.target.checked)}
-          />
-          Strict compiler mode
-        </label>
-        <label>
-          <input
-            type="checkbox"
-            checked={websocketEnabled}
-            onChange={(event) => onToggleWebsocket(event.target.checked)}
-          />
-          Enable live WebSocket analysis
-        </label>
+        <ToggleSwitch
+          checked={strict}
+          onChange={onToggleStrict}
+          label="Strict compiler mode"
+          description="Fail fast on unsafe typing patterns."
+        />
+        <ToggleSwitch
+          checked={websocketEnabled}
+          onChange={onToggleWebsocket}
+          label="Live WebSocket analysis"
+          description="Stream diagnostics while you type."
+        />
       </div>
-      <div className="settings-section">
-        <h3>Rules</h3>
-        {Object.entries(rules).map(([ruleId, enabled]) => (
-          <label key={ruleId}>
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={() => onToggleRule(ruleId)}
-            />
-            {ruleId}
-          </label>
-        ))}
-      </div>
+      {showRules && (
+        <div className="settings-section">
+          <div className="settings-section__header">
+            <h3>Rules</h3>
+            <Badge variant="neutral">{Object.keys(rules).length} active</Badge>
+          </div>
+          <div className="settings-rules">
+            {Object.entries(rules).map(([ruleId, enabled]) => (
+              <ToggleSwitch
+                key={ruleId}
+                checked={enabled}
+                onChange={() => onToggleRule(ruleId)}
+                label={ruleId}
+                description={enabled ? 'Enabled' : 'Disabled'}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

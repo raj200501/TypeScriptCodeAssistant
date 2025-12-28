@@ -1,12 +1,21 @@
 import React from 'react';
+import Badge from '../ui/Badge';
 
 function Footer() {
   return (
     <footer className="app-footer">
-      <p>&copy; 2024 TypeScript Code Assistant</p>
+      <div>
+        <strong>TypeScript Code Assistant</strong>
+        <p>API-ready analysis workflows for modern TypeScript teams.</p>
+      </div>
       <div className="app-footer__links">
-        <span>API: /api/openapi.json</span>
-        <span>WebSocket: /api/stream</span>
+        <span>
+          <Badge variant="info">REST</Badge> /api
+        </span>
+        <span>
+          <Badge variant="success">WS</Badge> /api/stream
+        </span>
+        <span>© 2024 TCA</span>
       </div>
     </footer>
   );
