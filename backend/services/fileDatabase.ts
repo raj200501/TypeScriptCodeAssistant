@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { AnalyzeResponse } from '@tca/shared';
 
 export interface StoredSnippet {
   id: string;
@@ -18,9 +19,17 @@ export interface StoredAnalysis {
   createdAt: string;
 }
 
+export interface StoredRun {
+  id: string;
+  fileName?: string;
+  createdAt: string;
+  summary: AnalyzeResponse['summary'];
+}
+
 interface DatabaseShape {
   snippets: StoredSnippet[];
   analyses: StoredAnalysis[];
+  runs: StoredRun[];
 }
 
 const databasePath = path.join(__dirname, '..', 'data', 'store.json');
@@ -29,7 +38,7 @@ const ensureDatabase = async () => {
   try {
     await fs.access(databasePath);
   } catch (error) {
-    const initialData: DatabaseShape = { snippets: [], analyses: [] };
+    const initialData: DatabaseShape = { snippets: [], analyses: [], runs: [] };
     await fs.mkdir(path.dirname(databasePath), { recursive: true });
     await fs.writeFile(databasePath, JSON.stringify(initialData, null, 2));
   }
@@ -38,7 +47,12 @@ const ensureDatabase = async () => {
 export const readDatabase = async (): Promise<DatabaseShape> => {
   await ensureDatabase();
   const raw = await fs.readFile(databasePath, 'utf-8');
-  return JSON.parse(raw) as DatabaseShape;
+  const parsed = JSON.parse(raw) as Partial<DatabaseShape>;
+  return {
+    snippets: parsed.snippets ?? [],
+    analyses: parsed.analyses ?? [],
+    runs: parsed.runs ?? [],
+  };
 };
 
 export const writeDatabase = async (data: DatabaseShape) => {
@@ -107,4 +121,21 @@ export const listAnalyses = async (snippetId?: string) => {
     return db.analyses;
   }
   return db.analyses.filter((analysis) => analysis.snippetId === snippetId);
+};
+
+export const recordAnalysisRun = async (run: Omit<StoredRun, 'id' | 'createdAt'>) => {
+  const db = await readDatabase();
+  const record: StoredRun = {
+    id: `run_${Date.now()}_${Math.floor(Math.random() * 10000)}`,
+    createdAt: new Date().toISOString(),
+    ...run,
+  };
+  db.runs.push(record);
+  await writeDatabase(db);
+  return record;
+};
+
+export const listAnalysisRuns = async () => {
+  const db = await readDatabase();
+  return db.runs;
 };

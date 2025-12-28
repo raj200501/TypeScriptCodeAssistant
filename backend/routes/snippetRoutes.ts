@@ -5,6 +5,7 @@ import {
   deleteSnippetHandler,
   getSnippetHandler,
   listAnalysesHandler,
+  listRunsHandler,
   listSnippetsHandler,
   updateSnippetHandler,
 } from '../controllers/snippetController';
@@ -18,5 +19,6 @@ router.put('/snippets/:id', updateSnippetHandler);
 router.delete('/snippets/:id', deleteSnippetHandler);
 router.post('/snippets/:id/analyze', analyzeSnippetHandler);
 router.get('/analyses', listAnalysesHandler);
+router.get('/runs', listRunsHandler);
 
 export default router;

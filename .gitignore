@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+.vscode/
+.DS_Store
+.env
+.env.*
+*.log
+playwright-report/
+playwright/.cache/
+frontend/dist/
+backend/dist/
+packages/**/dist/

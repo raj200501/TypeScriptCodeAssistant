@@ -1,0 +1,12 @@
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY backend/package.json ./backend/package.json
+COPY packages ./packages
+COPY tsconfig.base.json ./tsconfig.base.json
+RUN npm install --workspace backend --workspace packages/shared --workspace packages/analysis-engine
+COPY backend ./backend
+WORKDIR /app/backend
+RUN npm run build
+EXPOSE 5000
+CMD ["npm", "run", "start"]

@@ -1,13 +1,28 @@
 {
+  "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2019",
     "module": "commonjs",
     "outDir": "dist",
     "rootDir": ".",
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": false
+    "baseUrl": ".",
+    "noImplicitAny": false,
+    "paths": {
+      "@tca/shared": ["../packages/shared/dist"],
+      "@tca/analysis-engine": ["../packages/analysis-engine/dist"]
+    }
   },
-  "include": ["**/*.ts"]
+  "include": [
+    "app.ts",
+    "app-verified.ts",
+    "server.ts",
+    "server-verified.ts",
+    "config/**/*.ts",
+    "services/**/*.ts",
+    "utils/**/*.ts",
+    "httpApp.ts",
+    "websocket/**/*.ts",
+    "middleware/**/*.ts",
+    "ambient.d.ts"
+  ],
+  "exclude": ["**/*.test.ts", "controllers/**", "routes/**", "models/**"]
 }

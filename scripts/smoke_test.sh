@@ -5,6 +5,8 @@ PORT=${PORT:-5055}
 export PORT
 LOG_FILE="/tmp/typescript-code-assistant-backend.log"
 
+npm run build >/dev/null
+
 npm run dev --workspace backend -- --port "$PORT" >"$LOG_FILE" 2>&1 &
 SERVER_PID=$!
 
@@ -30,10 +32,12 @@ snippet_response=$(curl -s -X POST "http://localhost:$PORT/api/snippets" \
   -H 'Content-Type: application/json' \
   -d '{"title":"Demo snippet","code":"const greet = (name: string) => console.log(name);","language":"typescript","tags":["demo","smoke"]}')
 
-snippet_id=$(echo "$snippet_response" | python - <<'PY'
-import json,sys
-data=json.load(sys.stdin)
-print(data.get('id',''))
+export SNIPPET_RESPONSE="$snippet_response"
+
+snippet_id=$(python - <<'PY'
+import json,os
+payload=os.environ.get('SNIPPET_RESPONSE','')
+print(json.loads(payload).get('id',''))
 PY
 )
 

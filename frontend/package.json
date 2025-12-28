@@ -2,22 +2,10 @@
   "name": "typescript-code-assistant-frontend",
   "private": true,
   "scripts": {
-    "dev": "vite --port 5173",
-    "build": "vite build",
-    "preview": "vite preview --port 5173"
+    "dev": "node server.mjs",
+    "build": "node build.mjs",
+    "preview": "node server.mjs --dist"
   },
-  "dependencies": {
-    "axios": "^1.6.8",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^5.3.4"
-  },
-  "devDependencies": {
-    "@types/react": "^17.0.68",
-    "@types/react-dom": "^17.0.22",
-    "@types/react-router-dom": "^5.3.3",
-    "@vitejs/plugin-react": "^4.2.1",
-    "typescript": "^5.3.3",
-    "vite": "^5.1.4"
-  }
+  "dependencies": {},
+  "devDependencies": {}
 }

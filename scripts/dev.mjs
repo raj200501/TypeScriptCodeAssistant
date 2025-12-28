@@ -1,5 +1,18 @@
 import { spawn } from 'node:child_process';
 
+const runBuild = () => {
+  return new Promise((resolve, reject) => {
+    const build = spawn('npm', ['run', 'build'], { stdio: 'inherit', env: process.env });
+    build.on('exit', (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error(`build exited with code ${code}`));
+      }
+    });
+  });
+};
+
 const commands = [
   {
     name: 'backend',
@@ -12,6 +25,8 @@ const commands = [
     args: ['run', 'dev', '--workspace', 'frontend'],
   },
 ];
+
+await runBuild();
 
 const children = commands.map(({ cmd, args, name }) => {
   const child = spawn(cmd, args, { stdio: 'inherit', env: process.env });
