@@ -1,0 +1,22 @@
+{
+  "name": "typescript-code-assistant-backend",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "ts-node --transpile-only server-verified.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server-verified.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "express": "^4.18.2",
+    "mongoose": "^7.6.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.24",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  }
+}
