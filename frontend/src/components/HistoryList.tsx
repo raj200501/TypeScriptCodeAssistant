@@ -1,11 +1,13 @@
 import React from 'react';
 import { AnalysisRun } from '@tca/shared';
+import Badge from '../ui/Badge';
 
 interface HistoryListProps {
   runs: AnalysisRun[];
+  onSelect?: (run: AnalysisRun) => void;
 }
 
-const HistoryList: React.FC<HistoryListProps> = ({ runs }) => {
+const HistoryList: React.FC<HistoryListProps> = ({ runs, onSelect }) => {
   if (runs.length === 0) {
     return <p className="panel-empty">No analysis runs recorded yet.</p>;
   }
@@ -13,17 +15,26 @@ const HistoryList: React.FC<HistoryListProps> = ({ runs }) => {
   return (
     <div className="history-list">
       {runs.map((run) => (
-        <div key={run.id} className="history-card">
+        <button
+          key={run.id}
+          type="button"
+          className="history-card"
+          onClick={() => onSelect?.(run)}
+        >
           <div>
             <h3>{run.fileName ?? 'Untitled run'}</h3>
             <p>{new Date(run.createdAt).toLocaleString()}</p>
           </div>
           <div className="history-card__summary">
-            <span>Errors: {run.summary.errorCount}</span>
-            <span>Warnings: {run.summary.warningCount}</span>
-            <span>Info: {run.summary.infoCount}</span>
+            <Badge variant={run.summary.errorCount > 0 ? 'error' : 'neutral'}>
+              {run.summary.errorCount} Errors
+            </Badge>
+            <Badge variant={run.summary.warningCount > 0 ? 'warning' : 'neutral'}>
+              {run.summary.warningCount} Warnings
+            </Badge>
+            <Badge variant="info">{run.summary.infoCount} Info</Badge>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );

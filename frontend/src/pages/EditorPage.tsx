@@ -6,8 +6,12 @@ import QuickFixPreview from '../components/QuickFixPreview';
 import AnalysisSummary from '../components/AnalysisSummary';
 import { tcaClient } from '../services/tcaClient';
 import { useSettings } from '../hooks/useSettings';
+import { Badge, Button, Card, PageHeader, Spinner } from '../ui';
+import { useToast } from '../ui/Toast';
 
 const defaultCode = `import { useState } from 'react';\n\nvar count = 0;\n\nconsole.log(count);\n\nexport const Counter = () => {\n  const [value, setValue] = useState(count);\n  return <button onClick={() => setValue(value + 1)}>{value}</button>;\n};\n`;
+
+const exampleCode = `import type { FC } from 'react';\n\nconst heading = 'Welcome to TCA';\n\nexport const Banner: FC = () => {\n  const message = heading.trim();\n\n  return (\n    <section>\n      <h1>{message}</h1>\n      <p>Ship better TypeScript with instant insights.</p>\n    </section>\n  );\n};\n`;
 
 function EditorPage() {
   const [code, setCode] = useState(defaultCode);
@@ -15,10 +19,13 @@ function EditorPage() {
   const [selectedFix, setSelectedFix] = useState<QuickFix | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isFormatting, setIsFormatting] = useState(false);
   const [isApplying, setIsApplying] = useState(false);
   const [autoApplied, setAutoApplied] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [settings] = useSettings();
   const { websocketEnabled, strict, rules } = settings;
+  const { pushToast } = useToast();
 
   const analysisSummary = analysis?.summary;
 
@@ -44,7 +51,7 @@ function EditorPage() {
         JSON.stringify({
           type: 'settings',
           payload: { strict, rules },
-        }),
+        })
       );
       socket.send(JSON.stringify({ type: 'analyze', payload: { code, fileName: 'editor.tsx' } }));
     };
@@ -52,6 +59,7 @@ function EditorPage() {
       const payload = JSON.parse(event.data);
       if (payload.type === 'analysis') {
         setAnalysis(payload.payload);
+        setLastUpdated(new Date());
       }
     };
 
@@ -63,14 +71,26 @@ function EditorPage() {
     try {
       const response = await tcaClient.analyze({ code, fileName: 'editor.tsx', strict, rules });
       setAnalysis(response);
+      setLastUpdated(new Date());
+      pushToast({
+        title: 'Analysis complete',
+        description: `${response.summary.errorCount} errors, ${response.summary.warningCount} warnings`,
+        variant: response.summary.errorCount > 0 ? 'warning' : 'success',
+      });
     } finally {
       setIsAnalyzing(false);
     }
   };
 
   const runFormat = async () => {
-    const response = await tcaClient.format({ code, parser: 'tsx' });
-    setCode(response.formatted);
+    setIsFormatting(true);
+    try {
+      const response = await tcaClient.format({ code, parser: 'tsx' });
+      setCode(response.formatted);
+      pushToast({ title: 'Formatting applied', description: 'Your snippet has been formatted.', variant: 'info' });
+    } finally {
+      setIsFormatting(false);
+    }
   };
 
   const onSelectQuickFix = async (fix: QuickFix) => {
@@ -103,39 +123,77 @@ function EditorPage() {
     setCode(preview);
     setSelectedFix(null);
     setPreview('');
-    setIsApplying(false);
+    setTimeout(() => setIsApplying(false), 450);
+    pushToast({ title: 'Quick fix applied', description: selectedFix.title, variant: 'success' });
+  };
+
+  const resetExample = () => {
+    setCode(exampleCode);
+    setAnalysis(null);
+    setSelectedFix(null);
+    setPreview('');
   };
 
   return (
     <div className="page page--editor">
-      <div className="editor-toolbar">
-        <button className="button button--primary" onClick={runAnalysis} disabled={isAnalyzing}>
-          {isAnalyzing ? 'Analyzing...' : 'Analyze'}
-        </button>
-        <button className="button button--secondary" onClick={runFormat}>
-          Format
-        </button>
-        <span className="status-pill">WebSocket: {websocketEnabled ? 'on' : 'off'}</span>
-      </div>
+      <PageHeader
+        title="Analysis Editor"
+        subtitle="Run diagnostics, format, and preview fixes in one polished workspace."
+        actions={
+          <div className="stack-row">
+            <Button variant="outline" onClick={resetExample}>
+              Load Example
+            </Button>
+            <Button variant="secondary" onClick={runFormat} disabled={isFormatting}>
+              {isFormatting ? 'Formatting…' : 'Format'}
+            </Button>
+            <Button variant="primary" onClick={runAnalysis} disabled={isAnalyzing}>
+              {isAnalyzing ? 'Analyzing…' : 'Analyze'}
+            </Button>
+            <Button variant="ghost" onClick={applyQuickFix} disabled={!selectedFix || isApplying}>
+              Apply Fix
+            </Button>
+          </div>
+        }
+        meta={
+          <div className="editor-meta">
+            <Badge variant={websocketEnabled ? 'success' : 'neutral'}>
+              WebSocket {websocketEnabled ? 'connected' : 'off'}
+            </Badge>
+            {lastUpdated && <span>Updated {lastUpdated.toLocaleTimeString()}</span>}
+          </div>
+        }
+      />
       <div className="editor-layout">
-        <div className="editor-pane">
+        <Card className="editor-pane" title="Workspace" subtitle="TSX, lint, format, and refactor from here.">
           <MonacoEditor value={code} onChange={setCode} />
-        </div>
+        </Card>
         <aside className="editor-sidebar">
-          <AnalysisSummary summary={analysisSummary} />
-          <DiagnosticsList diagnostics={analysis?.diagnostics ?? []} onSelectQuickFix={onSelectQuickFix} />
+          <Card title="Analysis Summary" subtitle="Instant signal on severity and totals.">
+            <AnalysisSummary summary={analysisSummary} />
+          </Card>
+          <Card
+            title="Diagnostics"
+            subtitle="Sorted by severity, with quick fix actions."
+            actions={isAnalyzing ? <Spinner size="sm" label="Analyzing" /> : null}
+          >
+            <DiagnosticsList diagnostics={analysis?.diagnostics ?? []} onSelectQuickFix={onSelectQuickFix} />
+          </Card>
         </aside>
       </div>
-      <section className="panel">
-        <h2>Quick Fix Preview</h2>
+      <Card
+        className="panel panel--diff"
+        title="Quick Fix Preview"
+        subtitle="Review the change set before applying it to your snippet."
+      >
         <QuickFixPreview
           quickFix={selectedFix ?? undefined}
           original={code}
           updated={preview}
           onApply={applyQuickFix}
         />
-        {isApplying && <p>Applying fix...</p>}
-      </section>
+        {isApplying && <p className="panel-empty">Applying fix…</p>}
+      </Card>
     </div>
   );
 }

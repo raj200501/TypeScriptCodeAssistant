@@ -1,38 +1,69 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Badge, Button, Card, PageHeader } from '../ui';
 
 function HomePage() {
   return (
     <div className="page page--home">
-      <section className="hero">
-        <h2>Production-ready TypeScript analysis in a single workspace.</h2>
-        <p>
-          TypeScript Code Assistant is a full-stack toolchain for analyzing, formatting, and
-          refactoring TypeScript projects. Use the live editor, save snippets, and monitor analysis
-          history from one place.
-        </p>
-        <div className="hero__actions">
-          <Link className="button button--primary" to="/editor">
-            Launch Editor
-          </Link>
-          <Link className="button button--secondary" to="/snippets">
-            Browse Snippets
-          </Link>
-        </div>
+      <PageHeader
+        title="TypeScript Code Assistant"
+        subtitle="A premium workspace for analysis, refactors, and run history for TypeScript teams."
+        actions={
+          <div className="stack-row">
+            <Link to="/editor" className="ui-link">
+              <Button variant="primary" size="lg">
+                Launch Editor
+              </Button>
+            </Link>
+            <Link to="/snippets" className="ui-link">
+              <Button variant="secondary" size="lg">
+                Browse Snippets
+              </Button>
+            </Link>
+          </div>
+        }
+        meta={
+          <div className="hero-badges">
+            <Badge variant="success">Live WebSocket</Badge>
+            <Badge variant="info">Diagnostics Engine</Badge>
+            <Badge variant="neutral">Built-in Refactors</Badge>
+          </div>
+        }
+      />
+      <section className="hero-grid">
+        <Card
+          title="Analysis Engine"
+          subtitle="Compiler-grade diagnostics and explainers."
+        >
+          <p>
+            Run a full lint and type analysis pass, with severity badges and quick fixes surfaced in a
+            human-friendly feed.
+          </p>
+        </Card>
+        <Card title="Instant Signals" subtitle="Stream results as you type.">
+          <p>
+            WebSocket streaming keeps diagnostics and summary counts fresh, so reviewers never lose
+            context.
+          </p>
+        </Card>
+        <Card title="Workflow Ready" subtitle="Snippets, runs, and audit trails.">
+          <p>
+            Save refactor-ready snippets, track the history of analysis runs, and ship fixes with
+            confidence.
+          </p>
+        </Card>
       </section>
-      <section className="grid">
-        <div className="card">
-          <h3>Analysis Engine</h3>
-          <p>Compiler-powered diagnostics, explainers, and quick fixes for common issues.</p>
+      <section className="callout">
+        <div>
+          <h3>End-to-end flow in one workspace</h3>
+          <p>
+            Analyze, format, preview quick fixes, and capture snapshots without leaving the UI. The
+            same engine powers the API for easy integrations.
+          </p>
         </div>
-        <div className="card">
-          <h3>Live Collaboration</h3>
-          <p>Stream results over WebSocket for instant feedback as you type.</p>
-        </div>
-        <div className="card">
-          <h3>Workflow Friendly</h3>
-          <p>Save snippets, track analysis runs, and ship changes with confidence.</p>
-        </div>
+        <Link to="/runs" className="ui-link">
+          <Button variant="outline">View recent runs</Button>
+        </Link>
       </section>
     </div>
   );

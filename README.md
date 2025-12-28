@@ -1,109 +1,78 @@
 # TypeScript Code Assistant
 
-TypeScript Code Assistant (TCA) is a production-grade, end-to-end toolchain for analyzing,
-refactoring, and managing TypeScript code. It ships with a rule-based analysis engine, a
-dependency-light backend API, and a fast vanilla JavaScript frontend.
+**Ship-ready analysis workflows for TypeScript teams.**
 
-## What it does
+TypeScript Code Assistant (TCA) is a full-stack workspace for running diagnostics, reviewing quick fixes, and tracking analysis history. It combines a polished frontend with a TypeScript-powered backend so you can analyze, format, and refactor code in minutes.
 
-- **Static analysis without an LLM** using a deterministic rule engine.
-- **Quick fixes** that apply structured text edits.
-- **Live WebSocket streaming** for "analyze as you type" workflows.
-- **Snippet library** backed by a file database.
-- **History tracking** for analysis runs.
+[![Editor Preview](docs/screenshots/editor.svg)](docs/screenshots/editor.svg)
 
-## Screenshots
+## Why teams use TCA
 
-Screenshot assets are generated locally to keep the repository binary-free. Run:
+- **Live diagnostics** via REST + WebSocket streaming.
+- **Quick-fix previews** with before/after and inline diffs.
+- **Snippet library** to save reusable TypeScript patterns.
+- **Analysis history** for traceable run logs.
+- **Light/dark theme** with accessible focus states.
 
-```bash
-npm run screenshots
-```
-
-The generated files land in `docs/screenshots/` and match the filenames referenced by the
-verification workflow.
-
-## Architecture
-
-```
-Frontend (HTML/JS)
-        │
-        ▼
-Backend API (Node.js HTTP + WebSocket)
-        │
-        ▼
-Analysis Engine (rule-based diagnostics)
-```
-
-For more details, see [ARCHITECTURE.md](ARCHITECTURE.md).
-
-## ✅ Verified Quickstart
-
-The following steps were verified locally and will start both the backend API and frontend UI:
+## Demo in 60 seconds
 
 ```bash
 npm install
 npm run dev
 ```
 
-Backend health check:
+Open the frontend at `http://localhost:5173` and the API at `http://localhost:5000/api`.
 
-```bash
-curl http://localhost:5000/health
-```
+## UI previews (SVG)
 
-API example:
+> SVG previews are text-based and auto-generated via `npm run screenshots:svg`.
 
-```bash
-curl -X POST http://localhost:5000/api/suggestions \
-  -H 'Content-Type: application/json' \
-  -d '{"code":"const x = 1;"}'
-```
+![Editor](docs/screenshots/editor.svg)
+![Quick Fix Diff](docs/screenshots/diff.svg)
+![Snippets](docs/screenshots/snippets.svg)
+![History](docs/screenshots/history.svg)
 
-Smoke test:
+## Core workflows
 
-```bash
-npm run smoke
-```
+1. **Editor** — run analysis, format code, and review quick fixes with inline diff previews.
+2. **Snippets** — organize reusable patterns with search, metadata, and drawer actions.
+3. **History** — monitor recent runs with severity summaries and detailed run modals.
+4. **Settings** — toggle strict mode, WebSocket streaming, and rule sets.
 
 ## Scripts
 
-- `npm run dev`: start frontend and backend
-- `npm run test`: unit and integration tests (Node.js test runner)
-- `npm run test:integration`: integration tests only
-- `npm run test:e2e`: generate and validate screenshots
-- `npm run screenshots`: regenerate screenshots
-- `npm run lint`: repo checks (line endings/trailing whitespace)
-- `npm run typecheck`: TypeScript checks for backend and packages
-- `npm run verify`: full local verification pipeline
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Run frontend + backend together |
+| `npm run smoke` | Fast API smoke test |
+| `npm run verify` | Full CI pipeline (lint, typecheck, test, e2e) |
+| `npm run screenshots:svg` | Regenerate SVG previews |
 
-## API overview
+## Architecture (high level)
 
-- `POST /api/analyze`: diagnostics and quick fixes
-- `POST /api/format`: format code
-- `POST /api/refactor`: apply a quick fix
-- `POST /api/suggestions`: legacy suggestions endpoint
-- `GET /api/snippets`: snippet library
-- `GET /api/runs`: analysis history
-- `GET /api/openapi.json`: OpenAPI spec
-
-More details are available in [API.md](API.md).
-
-## Project structure
-
+```mermaid
+graph TD
+  UI[Frontend (Vite + React)] --> API[Backend (Node + Express)]
+  API --> Engine[Analysis Engine]
+  Engine --> Shared[Shared Types]
 ```
-backend/               Node.js API + WebSocket
-frontend/              Static HTML/JS UI
-packages/shared/       Shared types & validators
-packages/analysis-engine/ Rule-based analysis
-packages/sdk/          Typed API client
-scripts/               Dev utilities and smoke tests
-```
+
+## API quick summary
+
+- REST base: `/api`
+- WebSocket: `/api/stream`
+- OpenAPI spec: `API.md`
+
+See [`API.md`](API.md) for request/response schemas.
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
+1. Fork the repo.
+2. Create your feature branch: `git checkout -b feature/my-change`.
+3. Run `npm run verify` before opening a PR.
+
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT
+Licensed under the MIT License. See [`LICENSE`](LICENSE) if present in your fork.

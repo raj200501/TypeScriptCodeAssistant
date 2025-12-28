@@ -1,20 +1,44 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import Button from '../ui/Button';
+import { useTheme } from '../ui/theme';
+
+const navItems = [
+  { to: '/', label: 'Overview' },
+  { to: '/editor', label: 'Editor' },
+  { to: '/snippets', label: 'Snippets' },
+  { to: '/runs', label: 'History' },
+  { to: '/settings', label: 'Settings' },
+];
 
 function Header() {
+  const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="app-header">
       <div className="app-header__brand">
-        <h1>TypeScript Code Assistant</h1>
-        <p>Ship-ready analysis workflows for TypeScript teams.</p>
+        <Link to="/" className="app-header__logo">
+          <span>TypeScript Code Assistant</span>
+          <small>Ship-ready analysis workflows for TS teams.</small>
+        </Link>
       </div>
       <nav className="app-header__nav">
-        <Link to="/">Overview</Link>
-        <Link to="/editor">Editor</Link>
-        <Link to="/snippets">Snippets</Link>
-        <Link to="/runs">History</Link>
-        <Link to="/settings">Settings</Link>
+        {navItems.map((item) => (
+          <Link
+            key={item.to}
+            to={item.to}
+            className={location.pathname === item.to ? 'is-active' : undefined}
+          >
+            {item.label}
+          </Link>
+        ))}
       </nav>
+      <div className="app-header__actions">
+        <Button variant="ghost" size="sm" onClick={toggleTheme}>
+          {theme === 'light' ? 'Dark mode' : 'Light mode'}
+        </Button>
+      </div>
     </header>
   );
 }

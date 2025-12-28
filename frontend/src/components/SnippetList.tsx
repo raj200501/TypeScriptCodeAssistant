@@ -1,5 +1,7 @@
 import React from 'react';
 import { Snippet } from '@tca/shared';
+import Badge from '../ui/Badge';
+import Button from '../ui/Button';
 
 interface SnippetListProps {
   snippets: Snippet[];
@@ -17,16 +19,22 @@ const SnippetList: React.FC<SnippetListProps> = ({ snippets, onSelect, onDelete 
       {snippets.map((snippet) => (
         <div key={snippet.id} className="snippet-card">
           <div>
-            <h3>{snippet.title}</h3>
-            <p className="snippet-card__meta">Updated {new Date(snippet.updatedAt).toLocaleString()}</p>
+            <h3>{snippet.title || 'Untitled snippet'}</h3>
+            <p className="snippet-card__meta">
+              Updated {new Date(snippet.updatedAt).toLocaleString()}
+            </p>
+            <div className="snippet-card__tags">
+              <Badge variant="info">Snippet</Badge>
+              <Badge variant="neutral">{snippet.code.split('\n').length} lines</Badge>
+            </div>
           </div>
           <div className="snippet-card__actions">
-            <button className="button button--secondary" onClick={() => onSelect(snippet)}>
+            <Button variant="secondary" size="sm" onClick={() => onSelect(snippet)}>
               Open
-            </button>
-            <button className="button button--ghost" onClick={() => onDelete(snippet)}>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => onDelete(snippet)}>
               Delete
-            </button>
+            </Button>
           </div>
         </div>
       ))}

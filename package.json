@@ -26,7 +26,8 @@
     "screenshots": "node tools/screenshots.mjs",
     "format": "node tools/format-check.mjs",
     "format:write": "node tools/format-write.mjs",
-    "verify": "npm run lint && npm run typecheck && npm run test && npm run test:integration && npm run test:e2e && npm run smoke"
+    "verify": "npm run lint && npm run typecheck && npm run test && npm run test:integration && npm run test:e2e && npm run smoke",
+    "screenshots:svg": "node tools/generate-svg-screenshots.mjs"
   },
   "devDependencies": {}
 }
