@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TypeScript Code Assistant Preview</title>
+    <style>
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        background: #f5f7fb;
+        color: #1a1a1a;
+      }
+      header {
+        background: #1f2937;
+        color: #fff;
+        padding: 20px 40px;
+      }
+      main {
+        padding: 40px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .hero {
+        display: grid;
+        grid-template-columns: 1.2fr 1fr;
+        gap: 24px;
+        align-items: center;
+        background: #fff;
+        padding: 32px;
+        border-radius: 16px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      }
+      .hero h1 {
+        margin-top: 0;
+      }
+      .pill {
+        display: inline-block;
+        background: #e0f2fe;
+        color: #0369a1;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      .cta {
+        display: inline-block;
+        margin-top: 16px;
+        background: #2563eb;
+        color: #fff;
+        padding: 12px 18px;
+        border-radius: 8px;
+        text-decoration: none;
+      }
+      .editor {
+        margin-top: 32px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      textarea {
+        width: 100%;
+        min-height: 220px;
+        border-radius: 8px;
+        border: 1px solid #cbd5f5;
+        padding: 12px;
+        font-family: 'Fira Code', monospace;
+      }
+      button {
+        margin-top: 12px;
+        background: #111827;
+        color: #fff;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .suggestions {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+      }
+      .suggestions ul {
+        padding-left: 18px;
+      }
+      .stats {
+        display: flex;
+        gap: 16px;
+        margin-top: 20px;
+      }
+      .stat-card {
+        flex: 1;
+        background: #fff;
+        padding: 16px;
+        border-radius: 10px;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+      }
+      footer {
+        text-align: center;
+        padding: 20px;
+        color: #6b7280;
+      }
+      @media (max-width: 900px) {
+        .hero,
+        .editor {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h2>TypeScript Code Assistant</h2>
+    </header>
+    <main>
+      <section class="hero">
+        <div>
+          <span class="pill">Preview Mode</span>
+          <h1>Real-time suggestions for your TypeScript workflow</h1>
+          <p>
+            Paste your code, request analysis, and get structured refactoring ideas instantly. This preview uses the
+            same suggestion API shape as the full app.
+          </p>
+          <a class="cta" href="#editor">Try the Assistant</a>
+        </div>
+        <div>
+          <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=60" alt="Code preview" style="width: 100%; border-radius: 12px;" />
+        </div>
+      </section>
+
+      <section class="editor" id="editor">
+        <div>
+          <h3>Editor</h3>
+          <textarea id="code">function greet(name: string) {
+  console.log('Hello, ' + name);
+}
+
+greet('TypeScript');</textarea>
+          <button id="analyze">Analyze Code</button>
+        </div>
+        <div class="suggestions">
+          <h3>Suggestions</h3>
+          <ul id="suggestion-list"></ul>
+        </div>
+      </section>
+
+      <section class="stats">
+        <div class="stat-card">
+          <h4>Response time</h4>
+          <p>&lt; 200ms</p>
+        </div>
+        <div class="stat-card">
+          <h4>Actions provided</h4>
+          <p>Refactor + naming improvements</p>
+        </div>
+        <div class="stat-card">
+          <h4>Confidence</h4>
+          <p>High</p>
+        </div>
+      </section>
+      <section class="stats">
+        <div class="stat-card">
+          <h4>More previews</h4>
+          <p><a href="/preview-dashboard">Dashboard view</a></p>
+        </div>
+        <div class="stat-card">
+          <h4>Workflow canvas</h4>
+          <p><a href="/preview-workflows">Workflow view</a></p>
+        </div>
+        <div class="stat-card">
+          <h4>Insights library</h4>
+          <p><a href="/preview-insights">Insights view</a></p>
+        </div>
+      </section>
+    </main>
+    <footer>Preview server running locally with mock suggestions.</footer>
+    <script>
+      const list = document.getElementById('suggestion-list');
+      const button = document.getElementById('analyze');
+      const code = document.getElementById('code');
+
+      const render = (items) => {
+        list.innerHTML = '';
+        items.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item.suggestion;
+          list.appendChild(li);
+        });
+      };
+
+      const fetchSuggestions = async () => {
+        const response = await fetch('/api/suggestions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code.value }),
+        });
+        const data = await response.json();
+        render(data);
+      };
+
+      button.addEventListener('click', fetchSuggestions);
+      fetchSuggestions();
+    </script>
+  </body>
+</html>
