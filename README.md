@@ -1,7 +1,7 @@
 # TypeScript Code Assistant
 
 **Ship-ready analysis workflows for TypeScript teams.**
-
+ 
 TypeScript Code Assistant (TCA) is a full-stack workspace for running diagnostics, reviewing quick fixes, and tracking analysis history. It combines a polished frontend with a TypeScript-powered backend so you can analyze, format, and refactor code in minutes.
 
 [![Editor Preview](docs/screenshots/editor.svg)](docs/screenshots/editor.svg)
