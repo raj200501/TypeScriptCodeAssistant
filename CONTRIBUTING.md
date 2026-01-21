@@ -29,3 +29,12 @@ Before submitting a PR, make sure you have:
 - Include a summary of changes.
 - Link to any relevant issues or ADRs.
 - Update `docs/VERIFICATION.md` with new verification output if you touched runtime behavior.
+
+## Verification shortcuts
+
+- `scripts/doctor.sh` checks local tooling versions.
+- `scripts/verify.sh` runs format, lint, typecheck, tests, build, and smoke steps.
+
+## Demo mode
+
+- `node scripts/demo.mjs --demo` runs the analysis engine in a temporary workspace.

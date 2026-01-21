@@ -23,3 +23,18 @@ format:
 
 verify:
 	npm run verify
+
+.PHONY: setup fmt run doctor verify-script
+
+setup: install
+
+fmt:
+	npm run format:write
+
+run: dev
+
+doctor:
+	npm run doctor
+
+verify-script:
+	scripts/verify.sh

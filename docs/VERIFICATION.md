@@ -81,3 +81,11 @@ PNG screenshots used for e2e verification are generated at runtime and removed a
 - [x] `npm run verify` passes
 - [x] `npm run smoke` passes
 - [x] SVG previews exist under `docs/screenshots/*.svg`
+
+## One-command verification
+
+```bash
+scripts/verify.sh
+```
+
+This wrapper runs format, lint, typecheck, tests, build, and smoke steps when available.

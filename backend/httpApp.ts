@@ -13,6 +13,8 @@ import {
 } from './services/fileDatabase';
 import { openApiSpec } from './openapi';
 import { logger } from './utils/logger';
+import { createMetricsRegistry } from './utils/metrics';
+import { maybeInitOtel } from './utils/otel';
 import crypto from 'crypto';
 
 const rateState = new Map<string, { count: number; resetAt: number }>();
@@ -47,15 +49,30 @@ const rateLimit = (ip: string, limit = 120, windowMs = 60_000) => {
 };
 
 export const createRequestListener = () => {
+  const metricsRegistry = process.env.ENABLE_METRICS === '1' ? createMetricsRegistry() : null;
+  maybeInitOtel({ serviceName: 'tca-backend' });
+
   return async (req: any, res: any) => {
     const requestId = crypto.randomUUID();
     const url = new URL(req.url ?? '/', 'http://localhost');
     const pathname = url.pathname;
+    const method = req.method ?? 'GET';
+    const startTime = metricsRegistry ? process.hrtime.bigint() : null;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Request-Id');
     res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
     res.setHeader('x-request-id', requestId);
+    if (metricsRegistry && startTime) {
+      res.on('finish', () => {
+        const durationMs = Number(process.hrtime.bigint() - startTime) / 1_000_000;
+        metricsRegistry.observeDuration('http_request', durationMs, {
+          method,
+          path: pathname,
+          status: res.statusCode,
+        });
+      });
+    }
 
     if (req.method === 'OPTIONS') {
       res.statusCode = 204;
@@ -72,6 +89,13 @@ export const createRequestListener = () => {
     logger.info({ requestId, method: req.method, path: pathname }, 'request');
 
     try {
+      if (metricsRegistry && req.method === 'GET' && pathname === '/metrics') {
+        res.statusCode = 200;
+        res.setHeader('Content-Type', 'text/plain; version=0.0.4');
+        res.end(metricsRegistry.render());
+        return;
+      }
+
       if (req.method === 'GET' && pathname === '/health') {
         return jsonResponse(res, 200, { status: 'ok' });
       }
