@@ -8,6 +8,9 @@ declare module 'path';
 
 declare const process: {
   env: Record<string, string | undefined>;
+  hrtime: {
+    bigint: () => bigint;
+  };
 };
 
 declare const __dirname: string;

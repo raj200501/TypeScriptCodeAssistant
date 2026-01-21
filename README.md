@@ -76,3 +76,43 @@ Read [`CONTRIBUTING.md`](CONTRIBUTING.md) for guidelines.
 ## License
 
 Licensed under the MIT License. See [`LICENSE`](LICENSE) if present in your fork.
+
+## Quickstart (60 seconds)
+
+```bash
+npm install
+npm run dev
+```
+
+## Demo
+
+```bash
+npm run build
+node scripts/demo.mjs --demo
+```
+
+See [`docs/DEMO.md`](docs/DEMO.md) for full demo steps.
+
+## Verification
+
+```bash
+scripts/verify.sh
+```
+
+See [`docs/VERIFICATION.md`](docs/VERIFICATION.md) and [`docs/BASELINE.md`](docs/BASELINE.md).
+
+## Project structure
+
+- `backend/` - Node.js HTTP API + WebSocket server
+- `frontend/` - Vite + React UI
+- `packages/analysis-engine/` - diagnostics + quick fixes
+- `packages/sdk/` - client SDK helpers
+- `shared/` - shared TypeScript types
+- `docs/` - architecture, demo, security, and verification docs
+
+## Design decisions
+
+- Keep analysis engine pure and deterministic for offline testing.
+- Use file-backed storage for simple local persistence.
+- Keep optional observability features behind explicit environment flags.
+- Observability options are documented in [`docs/OBSERVABILITY.md`](docs/OBSERVABILITY.md).
